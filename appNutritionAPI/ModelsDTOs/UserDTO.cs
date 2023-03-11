@@ -21,7 +21,7 @@ namespace appNutritionAPI.ModelsDTOs
         public string Phone { get; set; } = null!;
         public string Email { get; set; } = null!;
         public string Password { get; set; } = null!;
-        public decimal RecoveryCode { get; set; }
+        public decimal? RecoveryCode { get; set; }
         public decimal Weight { get; set; }
         public decimal Hight { get; set; }
         public int Age { get; set; }
