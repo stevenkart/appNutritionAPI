@@ -67,34 +67,32 @@ namespace appNutritionAPI.Controllers
         //recibiendo por el Email de parametro de busqueda
         [HttpGet("GetUserData")]
         public ActionResult<IEnumerable<UserDTO>> GetUserData(string pEmail)
+
         {
             //aca usaremos una consulta linq que une informacion de 
             // 3 tablas (user - userRole - UserStatus)
             //Para asignar esos valores al DTO de usuario y entregarlos en formato json
 
             var query = (from u in _context.Users
-                         join ur in _context.States on u.IdState equals ur.IdState
-                         join us in _context.NutritionalPlans on u.IdPlan equals us.IdPlan
-                         join ut in _context.ExerciseRoutines on u.IdRoutine equals ut.IdRoutine
-                         where u.Email == pEmail && u.IdState != 2
+                         //join ur in _context.States on u.IdState equals ur.IdState
+                         //join us in _context.NutritionalPlans on u.IdPlan equals us.IdPlan
+                         //join ut in _context.ExerciseRoutines on u.IdRoutine equals ut.IdRoutine
+                         where u.Email == pEmail && u.IdState == 1
                          select new
                          {
-                             IdUser = u.IdUser,
-                             FullName = u.FullName,
-                             Email = u.Email,
-                             Phone = u.Phone,
-                             Password = u.Password,
-                             Weight = u.Weight,
-                             Hight = u.Hight,
-                             Age = u.Age,
-                             FatPercent = u.FatPercent,
-                             Genre = u.Genre,
-                             IdState = ur.IdState,
-                             StateDescription = ur.StateName,
-                             IdPlan = us.IdPlan,
-                             NutritionalPlanDescription = us.Description,
-                             IdRoutine = ut.IdRoutine,
-                             ExerciseRoutineDescription = ut.Description,
+                             u.IdUser,
+                             u.FullName,
+                             u.Email,
+                             u.Phone,
+                             u.Password,
+                             u.Weight,
+                             u.Hight,
+                             u.Age,
+                             u.FatPercent,
+                             u.Genre,
+                             u.IdState,
+                             u.IdPlan,
+                             u.IdRoutine,
 
                          }).ToList();
 
@@ -105,22 +103,19 @@ namespace appNutritionAPI.Controllers
             {
                 UserDTO NewItem = new UserDTO()
                 {
-                    IdUser = item.IdUser,
-                    FullName = item.FullName,
-                    Email = item.Email,
-                    Phone = item.Phone,
-                    Password = item.Password,
-                    Weight = item.Weight,
-                    Hight = item.Hight,
-                    Age = item.Age,
-                    FatPercent = item.FatPercent,
-                    Genre = item.Genre,
-                    IdState = item.IdState,
-                    StateDescription = item.StateDescription,
-                    IdPlan = item.IdPlan,
-                    NutritionalPlanDescription = item.NutritionalPlanDescription,
-                    IdRoutine = item.IdRoutine,
-                    ExerciseRoutineDescription = item.ExerciseRoutineDescription,
+                    Id = item.IdUser,
+                    NombreCompleto = item.FullName,
+                    Correo = item.Email,
+                    Tel = item.Phone,
+                    //Pass = item.Password,
+                    Peso = item.Weight,
+                    Altura = item.Hight,
+                    Edad = item.Age,
+                    Grasa = item.FatPercent,
+                    Genero = item.Genre,
+                    estadosID = item.IdState,
+                    planID = item.IdPlan,
+                    RutinaID = item.IdRoutine  
                 };
                 list.Add(NewItem);
             }
@@ -136,7 +131,7 @@ namespace appNutritionAPI.Controllers
         // PUT: api/Users/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutUser(int id, User user)
+        public async Task<IActionResult> PutUser(int id, User user) // el metodo lleva en el json el ID del usuario y tambien como params Id
         {
             if (id != user.IdUser)
             {
@@ -147,6 +142,8 @@ namespace appNutritionAPI.Controllers
 
             try
             {
+                string EncriptedPassword = MyCrypto.EncriptarEnUnSentido(user.Password);
+                user.Password = EncriptedPassword;
                 await _context.SaveChangesAsync();
             }
             catch (DbUpdateConcurrencyException)
@@ -161,7 +158,7 @@ namespace appNutritionAPI.Controllers
                 }
             }
 
-            return NoContent();
+            return Ok("Actualizado Correctamente!");
         }
 
         // POST: api/Users
@@ -192,7 +189,8 @@ namespace appNutritionAPI.Controllers
             _context.Users.Remove(user);
             await _context.SaveChangesAsync();
 
-            return NoContent();
+            //return NoContent();
+            return Ok("Eliminado Correctamente!");
         }
 
         private bool UserExists(int id)

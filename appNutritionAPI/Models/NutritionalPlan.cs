@@ -11,9 +11,9 @@ namespace appNutritionAPI.Models
         }
 
         public int IdPlan { get; set; }
-        public string Name { get; set; } = null!;
-        public string Description { get; set; } = null!;
-        public string PlanXample { get; set; } = null!;
+        public string Name { get; set; }
+        public string Description { get; set; }
+        public string PlanXample { get; set; }
         public int IdState { get; set; }
 
         public virtual State? IdStateNavigation { get; set; }
