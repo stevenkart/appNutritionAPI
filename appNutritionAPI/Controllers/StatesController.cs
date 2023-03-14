@@ -6,11 +6,13 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using appNutritionAPI.Models;
+using appNutritionAPI.Attributes;
 
 namespace appNutritionAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [ApiKey] // EL APIKEY para seguridad 
     public class StatesController : ControllerBase
     {
         private readonly AppNutritionContext _context;
