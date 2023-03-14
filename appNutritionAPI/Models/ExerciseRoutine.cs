@@ -11,9 +11,9 @@ namespace appNutritionAPI.Models
         }
 
         public int IdRoutine { get; set; }
-        public string RoutineName { get; set; } = null!;
-        public string Description { get; set; } = null!;
-        public string ExerciseXample { get; set; } = null!;
+        public string RoutineName { get; set; }
+        public string Description { get; set; }
+        public string ExerciseXample { get; set; }
         public int IdState { get; set; }
 
         public virtual State? IdStateNavigation { get; set; }
