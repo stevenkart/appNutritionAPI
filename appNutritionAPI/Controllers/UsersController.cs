@@ -39,12 +39,7 @@ namespace appNutritionAPI.Controllers
         {
             var user = await _context.Users.FindAsync(id);
 
-            if (user == null)
-            {
-                return NotFound();
-            }
-
-            return user;
+            return user == null ? NotFound() : Ok(user); 
         }
 
         [HttpGet("ValidateUserLogin")]
@@ -54,11 +49,8 @@ namespace appNutritionAPI.Controllers
             string EncriptedPassword = MyCrypto.EncriptarEnUnSentido(pPassword);
 
             var user = await _context.Users.SingleOrDefaultAsync(e => e.Email == pEmail && e.Password == EncriptedPassword);
-            if (user == null)
-            {
-                return NotFound();
-            }
-            return user;
+
+            return user == null ? NotFound() : Ok(user);
         }
 
 
@@ -119,11 +111,8 @@ namespace appNutritionAPI.Controllers
                 };
                 list.Add(NewItem);
             }
-            if (list == null)
-            {
-                return NotFound();
-            }
-            return list;
+
+            return list == null ? NotFound() : Ok(list);
         }
 
 
