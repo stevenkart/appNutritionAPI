@@ -77,7 +77,7 @@ namespace appNutritionAPI.Controllers
                          //join ur in _context.States on u.IdState equals ur.IdState
                          //join us in _context.NutritionalPlans on u.IdPlan equals us.IdPlan
                          //join ut in _context.ExerciseRoutines on u.IdRoutine equals ut.IdRoutine
-                         where u.Email == pEmail && u.IdState == 1
+                         where u.Email == pEmail
                          select new
                          {
                              u.IdUser,
@@ -104,18 +104,18 @@ namespace appNutritionAPI.Controllers
                 UserDTO NewItem = new UserDTO()
                 {
                     Id = item.IdUser,
-                    NombreCompleto = item.FullName,
-                    Correo = item.Email,
-                    Tel = item.Phone,
+                    Name = item.FullName,
+                    PhoneNum = item.Phone,
+                    EmailAddress = item.Email,
                     //Pass = item.Password,
-                    Peso = item.Weight,
-                    Altura = item.Hight,
-                    Edad = item.Age,
-                    Grasa = item.FatPercent,
-                    Genero = item.Genre,
-                    estadosID = item.IdState,
-                    planID = item.IdPlan,
-                    RutinaID = item.IdRoutine  
+                    W = item.Weight,
+                    H = item.Hight,
+                    Ages = item.Age,
+                    Fat = item.FatPercent,
+                    Genres = item.Genre,
+                    IdStates = item.IdState,
+                    IdPlans = item.IdPlan,
+                    IdRoutines = item.IdRoutine  
                 };
                 list.Add(NewItem);
             }
