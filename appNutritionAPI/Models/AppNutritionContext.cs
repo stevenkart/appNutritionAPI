@@ -26,7 +26,7 @@ namespace appNutritionAPI.Models
         {
             if (!optionsBuilder.IsConfigured)
             {
-#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
+//#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
                 optionsBuilder.UseSqlServer("SERVER=STEVEN-LAPTOP;DATABASE=AppNutrition;INTEGRATED SECURITY=TRUE; User Id=;Password=");
             }
         }
@@ -196,9 +196,7 @@ namespace appNutritionAPI.Models
                     .IsUnicode(false)
                     .HasColumnName("phone");
 
-                entity.Property(e => e.RecoveryCode)
-                    .HasColumnType("numeric(10, 2)")
-                    .HasColumnName("recoveryCode");
+                entity.Property(e => e.RecoveryCode).HasColumnName("recoveryCode");
 
                 entity.Property(e => e.Weight)
                     .HasColumnType("numeric(10, 2)")

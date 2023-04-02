@@ -10,6 +10,10 @@ using appNutritionAPI.Attributes;
 using appNutritionAPI.ModelsDTOs;
 using appNutritionAPI.Tools;
 using System.Reflection.Metadata.Ecma335;
+using Microsoft.AspNetCore.JsonPatch;
+using System.Dynamic;
+using System.Security.Claims;
+using System.Reflection.PortableExecutable;
 
 namespace appNutritionAPI.Controllers
 {
@@ -159,6 +163,36 @@ namespace appNutritionAPI.Controllers
             }
 
             return Ok("Actualizado Correctamente!");
+        }
+
+
+        // PATCH: api/Users/1
+        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        [HttpPatch("{id}")]
+        public async Task<IActionResult> PatchUser([FromRoute] int id, [FromBody] JsonPatchDocument UserModel)
+        {
+            var user = await _context.Users.FindAsync(id);
+
+            if (user != null)
+            {
+                
+                if (UserModel.Operations[0].path.ToString().Trim() == "password")
+                {
+                    string EncriptedPassword = MyCrypto.EncriptarEnUnSentido(UserModel.Operations[0].value.ToString().Trim());
+
+                    UserModel.Operations[0].value = EncriptedPassword;
+
+                }
+
+
+                UserModel.ApplyTo(user);
+                await _context.SaveChangesAsync();
+                return Ok("Actualizado Correctamente!");
+            }
+            else
+            {
+                return NotFound();
+            }
         }
 
         // POST: api/Users
