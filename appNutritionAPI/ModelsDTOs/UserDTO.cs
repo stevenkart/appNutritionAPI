@@ -17,19 +17,19 @@ namespace appNutritionAPI.ModelsDTOs
         //en este he decidido escribir los nombres en espanol solo por ejemplo de uso de los DTOs
 
         public int Id { get; set; }
-        public string NombreCompleto { get; set; } = null!;
-        public string Tel { get; set; } = null!;
-        public string Correo { get; set; } = null!;
+        public string Name { get; set; } = null!;
+        public string PhoneNum { get; set; } = null!;
+        public string EmailAddress { get; set; } = null!;
         public string Pass { get; set; } = null!;
         public decimal? Code { get; set; }
-        public decimal Peso { get; set; }
-        public decimal Altura { get; set; }
-        public int Edad { get; set; }
-        public decimal Grasa { get; set; }
-        public string Genero { get; set; } = null!;
-        public int estadosID { get; set; }
-        public int? planID { get; set; }
-        public int? RutinaID { get; set; }
+        public decimal W { get; set; }
+        public decimal H { get; set; }
+        public int Ages { get; set; }
+        public decimal Fat { get; set; }
+        public string Genres { get; set; } = null!;
+        public int IdStates { get; set; }
+        public int? IdPlans { get; set; }
+        public int? IdRoutines { get; set; }
 
     }
 }
