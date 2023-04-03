@@ -51,6 +51,20 @@ namespace appNutritionAPI.Controllers
             return user;
         }
 
+        // GET: api/Users/pEmail
+        [HttpGet("GetUserByEmail")]
+        public async Task<ActionResult<User>> GetUserByEmail(string pEmail)
+        {
+            var user = await _context.Users.SingleOrDefaultAsync(e => e.Email == pEmail);
+
+            if (user == null)
+            {
+                return NotFound();
+            }
+
+            return user;
+        }
+
         [HttpGet("ValidateUserLogin")]
         public async Task<ActionResult<User>> ValidateUserLogin(string pEmail, string pPassword)
         {
@@ -58,6 +72,24 @@ namespace appNutritionAPI.Controllers
             string EncriptedPassword = MyCrypto.EncriptarEnUnSentido(pPassword);
 
             var user = await _context.Users.SingleOrDefaultAsync(e => e.Email == pEmail && e.Password == EncriptedPassword);
+            if (user == null)
+            {
+                return NotFound();
+            }
+            return user;
+        }
+
+        [HttpGet("ValidateRecoveryCode")]
+        public async Task<ActionResult<User>> ValidateRecoveryCode(string pEmail, int pRecoveryCode)
+        {
+            if (pRecoveryCode == 0 || string.IsNullOrEmpty(Convert.ToString(pRecoveryCode)))
+            {
+                return NotFound();
+            }
+
+
+            var user = await _context.Users.SingleOrDefaultAsync(e => e.Email == pEmail && e.RecoveryCode == pRecoveryCode);
+            
             if (user == null)
             {
                 return NotFound();
@@ -176,7 +208,7 @@ namespace appNutritionAPI.Controllers
             if (user != null)
             {
                 
-                if (UserModel.Operations[0].path.ToString().Trim() == "password")
+                if (UserModel.Operations[0].path.ToString().Trim() == "/password")
                 {
                     string EncriptedPassword = MyCrypto.EncriptarEnUnSentido(UserModel.Operations[0].value.ToString().Trim());
 
