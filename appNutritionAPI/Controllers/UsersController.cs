@@ -14,6 +14,7 @@ using Microsoft.AspNetCore.JsonPatch;
 using System.Dynamic;
 using System.Security.Claims;
 using System.Reflection.PortableExecutable;
+using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.View;
 
 namespace appNutritionAPI.Controllers
 {
@@ -131,12 +132,26 @@ namespace appNutritionAPI.Controllers
                 return BadRequest();
             }
 
+            UserDTO NewObject = new UserDTO();
+
+
+
+
+
+            
+
+
+
+            //var UserViewModel = _context.Users.Find(id) ;
+
+            //if(UserViewModel == null) return NotFound();
+
+            //user.Password = UserViewModel.Password;
+
             _context.Entry(user).State = EntityState.Modified;
 
             try
             {
-                string EncriptedPassword = MyCrypto.EncriptarEnUnSentido(user.Password);
-                user.Password = EncriptedPassword;
                 await _context.SaveChangesAsync();
             }
             catch (DbUpdateConcurrencyException)
@@ -157,9 +172,58 @@ namespace appNutritionAPI.Controllers
 
         // PATCH: api/Users/1
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        // NuGet package Microsoft.AspNetCore.JsonPatch
+        // https://learn.microsoft.com/en-us/aspnet/core/web-api/jsonpatch?view=aspnetcore-7.0
+
         [HttpPatch("{id}")]
-        public async Task<IActionResult> PatchUser([FromRoute] int id, [FromBody] JsonPatchDocument UserModel)
+        public async Task<IActionResult> PatchUser([FromRoute] int id, [FromBody] JsonPatchDocument<User> UserModel)
         {
+
+            var user = await _context.Users.FindAsync(id);
+
+            if (user != null)
+            {
+                
+               
+                UserModel.ApplyTo(user);
+                await _context.SaveChangesAsync();
+                return Ok("Actualizado Correctamente!");
+            }
+            else
+            {
+                return NotFound();
+            }
+            
+            /*
+            [FromRoute] int id, [FromBody] JsonPatchDocument UserModel
+            var user = await _context.Users.FindAsync(id);
+
+
+
+            if (user != null)
+            {
+
+                if (UserModel.Operations[0].path.ToString().Trim() == "password")
+                {
+                    string EncriptedPassword = MyCrypto.EncriptarEnUnSentido(UserModel.Operations[0].value.ToString().Trim());
+
+                    UserModel.Operations[0].value = EncriptedPassword;
+
+                }
+
+
+                UserModel.ApplyTo(user);
+                await _context.SaveChangesAsync();
+                return Ok("Actualizado Correctamente!");
+            }
+            else
+            {
+                return NotFound();
+            }
+
+            /*
+            [FromRoute] int id, [FromBody] JsonPatchDocument UserModel
+
             var user = await _context.Users.FindAsync(id);
 
             if (user != null)
@@ -181,7 +245,7 @@ namespace appNutritionAPI.Controllers
             else
             {
                 return NotFound();
-            }
+            } */
         }
 
         // POST: api/Users
