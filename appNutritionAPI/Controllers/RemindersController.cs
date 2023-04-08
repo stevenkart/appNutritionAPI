@@ -7,6 +7,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using appNutritionAPI.Models;
 using appNutritionAPI.Attributes;
+using appNutritionAPI.ModelsDTOs;
+using System.Reflection.PortableExecutable;
 
 namespace appNutritionAPI.Controllers
 {
@@ -43,6 +45,43 @@ namespace appNutritionAPI.Controllers
             return reminder;
         }
 
+        // GET: api/Reminders/5
+        [HttpGet("GetReminderByUserId")]
+        public ActionResult<IEnumerable<Reminder>> GetReminderByUserId(int pUserId)
+        {
+            //SingleOrDefaultAsync(e => e.IdUser == pId);
+            //return await _context.Reminders.; 
+
+            var query = (from r in _context.Reminders
+                         where r.IdUser == pUserId
+                         select new
+                         {
+                             r.IdReminder,
+                             r.Detail,
+                             r.Date,
+                             r.Hour
+                         }).ToList();
+
+            //crear un objeto de tipo de DTO de retorno
+            List<Reminder> list = new List<Reminder>();
+
+            foreach (var item in query)
+            {
+                Reminder NewItem = new Reminder()
+                {
+                    IdReminder = item.IdReminder,
+                    Detail = item.Detail,
+                    Date = item.Date,
+                    Hour = item.Hour,
+                };
+                list.Add(NewItem);
+            }
+
+            return list == null ? NotFound() : Ok(list);
+
+
+        }
+
         // PUT: api/Reminders/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
@@ -74,6 +113,16 @@ namespace appNutritionAPI.Controllers
             return NoContent();
         }
 
+        /*
+         {
+            "idReminder": 0,
+            "detail": "detaller",
+            "date": "2023-12-30T00:00:21.044Z",
+            "hour": "23:59:59",
+            "done": true,
+            "idUser": 7
+         }
+         */
         // POST: api/Reminders
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]

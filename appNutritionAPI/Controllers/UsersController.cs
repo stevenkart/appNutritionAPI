@@ -215,9 +215,19 @@ namespace appNutritionAPI.Controllers
 
             if (user != null)
             {
-                
-               
-                UserModel.ApplyTo(user);
+
+                string Path = UserModel.Operations[0].path.ToString().Trim();
+
+                string Value = UserModel.Operations[0].value.ToString().Trim();
+
+                if ( Path.Equals( "Password" ) )
+                {
+                    string EncriptedPassword = MyCrypto.EncriptarEnUnSentido( Value );
+
+                    UserModel.Operations[0].value = EncriptedPassword;
+                }
+
+                UserModel.ApplyTo( user );
                 await _context.SaveChangesAsync();
                 return Ok("Actualizado Correctamente!");
             }
@@ -226,58 +236,8 @@ namespace appNutritionAPI.Controllers
                 return NotFound();
             }
             
-            /*
-            [FromRoute] int id, [FromBody] JsonPatchDocument UserModel
-            var user = await _context.Users.FindAsync(id);
-
-
-
-            if (user != null)
-            {
-
-                if (UserModel.Operations[0].path.ToString().Trim() == "password")
-                {
-                    string EncriptedPassword = MyCrypto.EncriptarEnUnSentido(UserModel.Operations[0].value.ToString().Trim());
-
-                    UserModel.Operations[0].value = EncriptedPassword;
-
-                }
-
-
-                UserModel.ApplyTo(user);
-                await _context.SaveChangesAsync();
-                return Ok("Actualizado Correctamente!");
-            }
-            else
-            {
-                return NotFound();
-            }
-
-            /*
-            [FromRoute] int id, [FromBody] JsonPatchDocument UserModel
-
-            var user = await _context.Users.FindAsync(id);
-
-            if (user != null)
-            {
-                
-                if (UserModel.Operations[0].path.ToString().Trim() == "/password")
-                {
-                    string EncriptedPassword = MyCrypto.EncriptarEnUnSentido(UserModel.Operations[0].value.ToString().Trim());
-
-                    UserModel.Operations[0].value = EncriptedPassword;
-
-                }
-
-
-                UserModel.ApplyTo(user);
-                await _context.SaveChangesAsync();
-                return Ok("Actualizado Correctamente!");
-            }
-            else
-            {
-                return NotFound();
-            } */
+            
+             
         }
 
         // POST: api/Users
