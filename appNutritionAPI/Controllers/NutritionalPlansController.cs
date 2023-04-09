@@ -6,6 +6,10 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using appNutritionAPI.Models;
+using appNutritionAPI.Tools;
+using Microsoft.AspNetCore.JsonPatch;
+using System.Collections;
+using appNutritionAPI.ModelsDTOs;
 
 namespace appNutritionAPI.Controllers
 {
@@ -25,6 +29,50 @@ namespace appNutritionAPI.Controllers
         public async Task<ActionResult<IEnumerable<NutritionalPlan>>> GetNutritionalPlans()
         {
             return await _context.NutritionalPlans.ToListAsync();
+        }
+
+    
+        //Este Get permite obtener la info de un usuario 
+        //recibiendo por el Email de parametro de busqueda
+        [HttpGet("GetNutritionalPlansFilter")]
+        public ActionResult<IEnumerable<NutritionalPlan>> GetNutritionalPlansFilter(int pState)
+
+        {
+            //aca usaremos una consulta linq que une informacion de 
+            // 3 tablas (user - userRole - UserStatus)
+            //Para asignar esos valores al DTO de usuario y entregarlos en formato json
+
+            var query = (from u in _context.NutritionalPlans
+                         where u.IdState == pState
+                         select new
+                         {
+                             u.IdPlan,
+                             u.Name,
+                             u.Description,
+                             u.PlanXample,
+                             u.IdState
+                         }).ToList();
+
+            //crear un objeto de tipo de DTO de retorno
+            List<NutritionalPlan> list = new List<NutritionalPlan>();
+
+            foreach (var item in query)
+            {
+                NutritionalPlan NewItem = new NutritionalPlan()
+                {
+                    IdPlan = item.IdPlan,
+                    Name = item.Name,
+                    Description = item.Description,
+                    PlanXample = item.PlanXample,
+                    IdState = item.IdState
+                };
+                list.Add(NewItem);
+            }
+            if (list == null)
+            {
+                return NotFound();
+            }
+            return list;
         }
 
         // GET: api/NutritionalPlans/5
@@ -69,10 +117,31 @@ namespace appNutritionAPI.Controllers
                 }
             }
 
-            return NoContent();
+            //return NoContent();
+            return Ok("Actualizado Correctamente!");
         }
 
-    
+
+        // PATCH: api/NutritionalPlans/1
+        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        [HttpPatch("{id}")]
+        public async Task<IActionResult> PatchPlan([FromRoute] int id, [FromBody] JsonPatchDocument PlanModel)
+        {
+            var plan = await _context.NutritionalPlans.FindAsync(id);
+
+            if (plan != null)
+            {
+
+                PlanModel.ApplyTo(plan);
+                await _context.SaveChangesAsync();
+                return Ok("Actualizado Correctamente!");
+            }
+            else
+            {
+                return NotFound();
+            }
+        }
+
 
         // POST: api/NutritionalPlans
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
@@ -98,7 +167,7 @@ namespace appNutritionAPI.Controllers
             _context.NutritionalPlans.Remove(nutritionalPlan);
             await _context.SaveChangesAsync();
 
-            return NoContent();
+            return Ok("Eliminado Correctamente!");
         }
 
         private bool NutritionalPlanExists(int id)
