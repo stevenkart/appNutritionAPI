@@ -10,11 +10,13 @@ using appNutritionAPI.Tools;
 using Microsoft.AspNetCore.JsonPatch;
 using System.Collections;
 using appNutritionAPI.ModelsDTOs;
+using appNutritionAPI.Attributes;
 
 namespace appNutritionAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [ApiKey] // EL APIKEY para seguridad 
     public class NutritionalPlansController : ControllerBase
     {
         private readonly AppNutritionContext _context;
@@ -32,8 +34,8 @@ namespace appNutritionAPI.Controllers
         }
 
     
-        //Este Get permite obtener la info de un usuario 
-        //recibiendo por el Email de parametro de busqueda
+        //Este Get permite obtener la info de varios planes de manera filtrada 
+        //recibiendo por el IDSTATE de parametro de busqueda
         [HttpGet("GetNutritionalPlansFilter")]
         public ActionResult<IEnumerable<NutritionalPlan>> GetNutritionalPlansFilter(int pState)
 
