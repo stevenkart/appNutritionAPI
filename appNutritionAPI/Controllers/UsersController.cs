@@ -14,6 +14,7 @@ using Microsoft.AspNetCore.JsonPatch;
 using System.Dynamic;
 using System.Security.Claims;
 using System.Reflection.PortableExecutable;
+using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.View;
 
 namespace appNutritionAPI.Controllers
 {
@@ -43,12 +44,7 @@ namespace appNutritionAPI.Controllers
         {
             var user = await _context.Users.FindAsync(id);
 
-            if (user == null)
-            {
-                return NotFound();
-            }
-
-            return user;
+            return user == null ? NotFound() : Ok(user); 
         }
 
         // GET: api/Users/pEmail
@@ -72,11 +68,8 @@ namespace appNutritionAPI.Controllers
             string EncriptedPassword = MyCrypto.EncriptarEnUnSentido(pPassword);
 
             var user = await _context.Users.SingleOrDefaultAsync(e => e.Email == pEmail && e.Password == EncriptedPassword);
-            if (user == null)
-            {
-                return NotFound();
-            }
-            return user;
+
+            return user == null ? NotFound() : Ok(user);
         }
 
         [HttpGet("ValidateRecoveryCode")]
@@ -155,11 +148,8 @@ namespace appNutritionAPI.Controllers
                 };
                 list.Add(NewItem);
             }
-            if (list == null)
-            {
-                return NotFound();
-            }
-            return list;
+
+            return list == null ? NotFound() : Ok(list);
         }
 
 
@@ -174,12 +164,26 @@ namespace appNutritionAPI.Controllers
                 return BadRequest();
             }
 
+            UserDTO NewObject = new UserDTO();
+
+
+
+
+
+            
+
+
+
+            //var UserViewModel = _context.Users.Find(id) ;
+
+            //if(UserViewModel == null) return NotFound();
+
+            //user.Password = UserViewModel.Password;
+
             _context.Entry(user).State = EntityState.Modified;
 
             try
             {
-                string EncriptedPassword = MyCrypto.EncriptarEnUnSentido(user.Password);
-                user.Password = EncriptedPassword;
                 await _context.SaveChangesAsync();
             }
             catch (DbUpdateConcurrencyException)
@@ -200,24 +204,51 @@ namespace appNutritionAPI.Controllers
 
         // PATCH: api/Users/1
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        // NuGet package Microsoft.AspNetCore.JsonPatch
+        // https://learn.microsoft.com/en-us/aspnet/core/web-api/jsonpatch?view=aspnetcore-7.0
+
+        /*
+         http://192.168.23.1:45455/api/Users/6
+         [
+            {
+                "path": "fullName",
+                "op": "add",
+                "value": "Oscar"
+            },
+            {
+                "path": "phone",
+                "op": "add",
+                "value": 2222222
+            },
+            {
+                "path": "age",
+                "op": "add",
+                "value": 32
+            }
+         ]
+         */
+
         [HttpPatch("{id}")]
-        public async Task<IActionResult> PatchUser([FromRoute] int id, [FromBody] JsonPatchDocument UserModel)
+        public async Task<IActionResult> PatchUser([FromRoute] int id, [FromBody] JsonPatchDocument<User> UserModel)
         {
+
             var user = await _context.Users.FindAsync(id);
 
             if (user != null)
             {
-                
-                if (UserModel.Operations[0].path.ToString().Trim() == "/password")
+
+                string Path = UserModel.Operations[0].path.ToString().Trim();
+
+                string Value = UserModel.Operations[0].value.ToString().Trim();
+
+                if ( Path.Equals( "Password" ) )
                 {
-                    string EncriptedPassword = MyCrypto.EncriptarEnUnSentido(UserModel.Operations[0].value.ToString().Trim());
+                    string EncriptedPassword = MyCrypto.EncriptarEnUnSentido( Value );
 
                     UserModel.Operations[0].value = EncriptedPassword;
-
                 }
 
-
-                UserModel.ApplyTo(user);
+                UserModel.ApplyTo( user );
                 await _context.SaveChangesAsync();
                 return Ok("Actualizado Correctamente!");
             }
@@ -225,6 +256,9 @@ namespace appNutritionAPI.Controllers
             {
                 return NotFound();
             }
+            
+            
+             
         }
 
         // POST: api/Users

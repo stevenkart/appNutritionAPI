@@ -12,7 +12,7 @@ namespace appNutritionAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [ApiKey] // EL APIKEY para seguridad 
+    //[ApiKey] // EL APIKEY para seguridad 
     public class StatesController : ControllerBase
     {
         private readonly AppNutritionContext _context;
