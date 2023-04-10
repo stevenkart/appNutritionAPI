@@ -207,6 +207,27 @@ namespace appNutritionAPI.Controllers
         // NuGet package Microsoft.AspNetCore.JsonPatch
         // https://learn.microsoft.com/en-us/aspnet/core/web-api/jsonpatch?view=aspnetcore-7.0
 
+        /*
+         http://192.168.23.1:45455/api/Users/6
+         [
+            {
+                "path": "fullName",
+                "op": "add",
+                "value": "Oscar"
+            },
+            {
+                "path": "phone",
+                "op": "add",
+                "value": 2222222
+            },
+            {
+                "path": "age",
+                "op": "add",
+                "value": 32
+            }
+         ]
+         */
+
         [HttpPatch("{id}")]
         public async Task<IActionResult> PatchUser([FromRoute] int id, [FromBody] JsonPatchDocument<User> UserModel)
         {

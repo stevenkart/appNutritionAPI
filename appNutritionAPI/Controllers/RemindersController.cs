@@ -10,6 +10,9 @@ using appNutritionAPI.Attributes;
 using appNutritionAPI.ModelsDTOs;
 using System.Reflection.PortableExecutable;
 
+using Microsoft.AspNetCore.JsonPatch;
+using appNutritionAPI.Tools;
+
 namespace appNutritionAPI.Controllers
 {
     [Route("api/[controller]")]
@@ -112,6 +115,38 @@ namespace appNutritionAPI.Controllers
 
             return NoContent();
         }
+
+
+
+        // PATCH: api/Reminder/1
+        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        // NuGet package Microsoft.AspNetCore.JsonPatch
+        // https://learn.microsoft.com/en-us/aspnet/core/web-api/jsonpatch?view=aspnetcore-7.0
+
+        [HttpPatch("{id}")]
+        public async Task<IActionResult> PatchUser([FromRoute] int id, [FromBody] JsonPatchDocument<Reminder> ReminderModel)
+        {
+
+            var reminder = await _context.Reminders.FindAsync(id);
+
+            if (reminder != null)
+            {
+                ReminderModel.ApplyTo(reminder);
+                await _context.SaveChangesAsync();
+                return Ok("Actualizado Correctamente!");
+            }
+            else
+            {
+                return NotFound();
+            }
+
+
+
+        }
+
+
+
+
 
         /*
          {
