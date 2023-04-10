@@ -164,22 +164,6 @@ namespace appNutritionAPI.Controllers
                 return BadRequest();
             }
 
-            UserDTO NewObject = new UserDTO();
-
-
-
-
-
-            
-
-
-
-            //var UserViewModel = _context.Users.Find(id) ;
-
-            //if(UserViewModel == null) return NotFound();
-
-            //user.Password = UserViewModel.Password;
-
             _context.Entry(user).State = EntityState.Modified;
 
             try
@@ -202,32 +186,6 @@ namespace appNutritionAPI.Controllers
         }
 
 
-        // PATCH: api/Users/1
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        // NuGet package Microsoft.AspNetCore.JsonPatch
-        // https://learn.microsoft.com/en-us/aspnet/core/web-api/jsonpatch?view=aspnetcore-7.0
-
-        /*
-         http://192.168.23.1:45455/api/Users/6
-         [
-            {
-                "path": "fullName",
-                "op": "add",
-                "value": "Oscar"
-            },
-            {
-                "path": "phone",
-                "op": "add",
-                "value": 2222222
-            },
-            {
-                "path": "age",
-                "op": "add",
-                "value": 32
-            }
-         ]
-         */
-
         [HttpPatch("{id}")]
         public async Task<IActionResult> PatchUser([FromRoute] int id, [FromBody] JsonPatchDocument<User> UserModel)
         {
@@ -241,7 +199,7 @@ namespace appNutritionAPI.Controllers
 
                 string Value = UserModel.Operations[0].value.ToString().Trim();
 
-                if ( Path.Equals( "Password" ) )
+                if ( Path.Equals( "/Password" ) || Path.Equals("/password") || Path.Equals("password"))
                 {
                     string EncriptedPassword = MyCrypto.EncriptarEnUnSentido( Value );
 
