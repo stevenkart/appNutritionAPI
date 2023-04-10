@@ -9,54 +9,65 @@ namespace appNutritionAPI.Tools
         //no solo contraseñas sino cualquier dato importante
         //TODO: utilizar estas funciona para encriptar la cadena de conexión 
 
-        string LlavePersonalizada = "APPkajhsdkjhkj672716762TEMP";
+        const string key = "Pr0gr@m@ci0n6?_(S3curityK3y)_APP";
+        const string iv = "_%S3c0nd~K3y=#$_";
+
+        //encriptacion AES256 source
+        //https://learn.microsoft.com/en-us/dotnet/api/system.security.cryptography.aes?view=net-6.0 
+
 
         public string DesEncriptarPassword(string Pass)
         {
-            String R = string.Empty;
+            StringBuilder sb = new StringBuilder();
 
-            using (TripleDESCryptoServiceProvider tripleDESCryptoService = new TripleDESCryptoServiceProvider())
+            byte[] keyBytes = Encoding.UTF8.GetBytes(key);
+            byte[] ivBytes = Encoding.UTF8.GetBytes(iv);
+
+            using (Aes aes = Aes.Create())
             {
-                using (MD5CryptoServiceProvider hashMD5Provider = new MD5CryptoServiceProvider())
-                {
-                    Byte[] byteHash = hashMD5Provider.ComputeHash(Encoding.UTF8.GetBytes(LlavePersonalizada));
+                aes.KeySize = 256;
+                aes.BlockSize = 128;
+                aes.Mode = CipherMode.CBC;
+                aes.Padding = PaddingMode.PKCS7;
+                aes.Key = keyBytes;
+                aes.IV = ivBytes;
 
-                    tripleDESCryptoService.Key = byteHash;
-                    tripleDESCryptoService.Mode = CipherMode.ECB;
+                ICryptoTransform decryptor = aes.CreateDecryptor(aes.Key, aes.IV);
 
-                    Byte[] data = Convert.FromBase64String(Pass);
+                byte[] ciphertextBytes = Convert.FromBase64String(Pass);
+                byte[] plaintextBytes = decryptor.TransformFinalBlock(ciphertextBytes, 0, ciphertextBytes.Length);
 
-                    R = Encoding.UTF8.GetString(tripleDESCryptoService.CreateDecryptor().TransformFinalBlock(data, 0, data.Length));
-
-                }
+                sb.Append(Encoding.UTF8.GetString(plaintextBytes));
             }
 
-            return R;
-
+            return sb.ToString();
         }
 
         public string EncriptarPassword(string Pass)
         {
-            String R = string.Empty;
+            StringBuilder sb = new StringBuilder();
 
-            using (TripleDESCryptoServiceProvider tripleDESCryptoService = new TripleDESCryptoServiceProvider())
+            byte[] keyBytes = Encoding.UTF8.GetBytes(key);
+            byte[] ivBytes = Encoding.UTF8.GetBytes(iv);
+
+            using (Aes aes = Aes.Create())
             {
-                using (MD5CryptoServiceProvider hashMD5Provider = new MD5CryptoServiceProvider())
-                {
-                    Byte[] byteHash = hashMD5Provider.ComputeHash(Encoding.UTF8.GetBytes(LlavePersonalizada));
+                aes.KeySize = 256;
+                aes.BlockSize = 128;
+                aes.Mode = CipherMode.CBC;
+                aes.Padding = PaddingMode.PKCS7;
+                aes.Key = keyBytes;
+                aes.IV = ivBytes;
 
-                    tripleDESCryptoService.Key = byteHash;
-                    tripleDESCryptoService.Mode = CipherMode.ECB;
+                ICryptoTransform encryptor = aes.CreateEncryptor(aes.Key, aes.IV);
 
-                    Byte[] data = Encoding.UTF8.GetBytes(Pass);
+                byte[] plaintextBytes = Encoding.UTF8.GetBytes(Pass);
+                byte[] ciphertextBytes = encryptor.TransformFinalBlock(plaintextBytes, 0, plaintextBytes.Length);
 
-                    R = Convert.ToBase64String(tripleDESCryptoService.CreateEncryptor().TransformFinalBlock(data, 0, data.Length));
-
-                }
+                sb.Append(Convert.ToBase64String(ciphertextBytes));
             }
 
-            return R;
-
+            return sb.ToString();
         }
 
         public string EncriptarEnUnSentido(string Entrada)
