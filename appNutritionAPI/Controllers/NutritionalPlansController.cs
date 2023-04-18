@@ -33,7 +33,7 @@ namespace appNutritionAPI.Controllers
             return await _context.NutritionalPlans.ToListAsync();
         }
 
-    
+
         //Este Get permite obtener la info de varios planes de manera filtrada 
         //recibiendo por el IDSTATE de parametro de busqueda
         [HttpGet("GetNutritionalPlansFilter")]
@@ -90,6 +90,48 @@ namespace appNutritionAPI.Controllers
 
             return nutritionalPlan;
         }
+
+        [HttpGet("GetNutritionalPlansFilterId")]
+        public ActionResult<IEnumerable<NutritionalPlan>> GetNutritionalPlansFilterId(int pID)
+
+        {
+            //aca usaremos una consulta linq que une informacion de 
+            // 3 tablas (user - userRole - UserStatus)
+            //Para asignar esos valores al DTO de usuario y entregarlos en formato json
+
+            var query = (from u in _context.NutritionalPlans
+                         where u.IdPlan == pID
+                         select new
+                         {
+                             u.IdPlan,
+                             u.Name,
+                             u.Description,
+                             u.PlanXample,
+                             u.IdState
+                         }).ToList();
+
+            //crear un objeto de tipo de DTO de retorno
+            List<NutritionalPlan> list = new List<NutritionalPlan>();
+
+            foreach (var item in query)
+            {
+                NutritionalPlan NewItem = new NutritionalPlan()
+                {
+                    IdPlan = item.IdPlan,
+                    Name = item.Name,
+                    Description = item.Description,
+                    PlanXample = item.PlanXample,
+                    IdState = item.IdState
+                };
+                list.Add(NewItem);
+            }
+            if (list == null)
+            {
+                return NotFound();
+            }
+            return list;
+        }
+
 
         // PUT: api/NutritionalPlans/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
