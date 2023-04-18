@@ -15,6 +15,7 @@ using System.Dynamic;
 using System.Security.Claims;
 using System.Reflection.PortableExecutable;
 using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.View;
+using Microsoft.EntityFrameworkCore.Metadata;
 
 namespace appNutritionAPI.Controllers
 {
@@ -157,7 +158,7 @@ namespace appNutritionAPI.Controllers
         // PUT: api/Users/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutUser(int id, User user) // el metodo lleva en el json el ID del usuario y tambien como params Id
+        public async Task<ActionResult<User>> PutUser(int id, User user) // el metodo lleva en el json el ID del usuario y tambien como params Id
         {
             if (id != user.IdUser)
             {
