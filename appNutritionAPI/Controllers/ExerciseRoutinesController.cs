@@ -73,6 +73,47 @@ namespace appNutritionAPI.Controllers
             return list;
         }
 
+        [HttpGet("GetRoutinesFilterId")]
+        public ActionResult<IEnumerable<ExerciseRoutine>> GetRoutinesFilterId(int pID)
+
+        {
+            //aca usaremos una consulta linq que une informacion de 
+            // 3 tablas (user - userRole - UserStatus)
+            //Para asignar esos valores al DTO de usuario y entregarlos en formato json
+
+            var query = (from u in _context.ExerciseRoutines
+                         where u.IdRoutine == pID
+                         select new
+                         {
+                             u.IdRoutine,
+                             u.RoutineName,
+                             u.Description,
+                             u.ExerciseXample,
+                             u.IdState
+                         }).ToList();
+
+            List<ExerciseRoutine> list = new List<ExerciseRoutine>();
+
+            foreach (var item in query)
+            {
+                ExerciseRoutine NewItem = new ExerciseRoutine()
+                {
+                    IdRoutine = item.IdRoutine,
+                    RoutineName = item.RoutineName,
+                    Description = item.Description,
+                    ExerciseXample = item.ExerciseXample,
+                    IdState = item.IdState
+                };
+                list.Add(NewItem);
+            }
+            if (list == null)
+            {
+                return NotFound();
+            }
+            return list;
+        }
+
+
         // GET: api/ExerciseRoutines/5
         [HttpGet("{id}")]
         public async Task<ActionResult<ExerciseRoutine>> GetExerciseRoutine(int id)

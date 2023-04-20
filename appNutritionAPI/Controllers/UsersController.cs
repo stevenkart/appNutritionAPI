@@ -200,7 +200,7 @@ namespace appNutritionAPI.Controllers
 
                 string Value = UserModel.Operations[0].value.ToString().Trim();
 
-                if ( Path.Equals( "/Password" ) || Path.Equals("/password") || Path.Equals("password"))
+                if ( Path.Equals( "Password" ) || Path.Equals("/password") || Path.Equals("password"))
                 {
                     string EncriptedPassword = MyCrypto.EncriptarEnUnSentido( Value );
 
