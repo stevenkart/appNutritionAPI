@@ -40,12 +40,7 @@ namespace appNutritionAPI.Controllers
         {
             var reminder = await _context.Reminders.FindAsync(id);
 
-            if (reminder == null)
-            {
-                return NotFound();
-            }
-
-            return reminder;
+            return reminder == null ? NotFound() : Ok(reminder);
         }
 
         // GET: api/Reminders/5
@@ -82,7 +77,6 @@ namespace appNutritionAPI.Controllers
 
             return list == null ? NotFound() : Ok(list);
 
-
         }
 
         // PUT: api/Reminders/5
@@ -116,13 +110,10 @@ namespace appNutritionAPI.Controllers
             return NoContent();
         }
 
-
-
         // PATCH: api/Reminder/1
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         // NuGet package Microsoft.AspNetCore.JsonPatch
         // https://learn.microsoft.com/en-us/aspnet/core/web-api/jsonpatch?view=aspnetcore-7.0
-
         [HttpPatch("{id}")]
         public async Task<IActionResult> PatchUser([FromRoute] int id, [FromBody] JsonPatchDocument<Reminder> ReminderModel)
         {
@@ -140,24 +131,8 @@ namespace appNutritionAPI.Controllers
                 return NotFound();
             }
 
-
-
         }
 
-
-
-
-
-        /*
-         {
-            "idReminder": 0,
-            "detail": "detaller",
-            "date": "2023-12-30T00:00:21.044Z",
-            "hour": "23:59:59",
-            "done": true,
-            "idUser": 7
-         }
-         */
         // POST: api/Reminders
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
