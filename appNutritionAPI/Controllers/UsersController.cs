@@ -21,7 +21,7 @@ namespace appNutritionAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [ApiKey] // EL APIKEY para seguridad 
+    //[ApiKey] // EL APIKEY para seguridad 
     public class UsersController : ControllerBase
     {
         private readonly AppNutritionContext _context;
@@ -91,7 +91,6 @@ namespace appNutritionAPI.Controllers
             return user;
         }
 
-
         //Ejemplo  GET: /api/Users/GetUserData?Correo=a%40gmail.com
         //Este Get permite obtener la info de un usuario 
         //recibiendo por el Email de parametro de busqueda
@@ -146,6 +145,35 @@ namespace appNutritionAPI.Controllers
                     IdStates = item.IdState,
                     IdPlans = item.IdPlan,
                     IdRoutines = item.IdRoutine  
+                };
+                list.Add(NewItem);
+            }
+
+            return list == null ? NotFound() : Ok(list);
+        }
+
+        [HttpGet("GetUsersList")]
+        public ActionResult<IEnumerable<UserDTO>> GetUsersList(int pUserStatus)
+        {
+            var query = (from u in _context.Users
+                         where u.IdState == pUserStatus
+                         select new
+                         {
+                             u.IdUser,
+                             u.FullName,
+                             u.IdState
+                         }).ToList();
+
+            //crear un objeto de tipo de DTO de retorno
+            List<User> list = new List<User>();
+
+            foreach (var item in query)
+            {
+                User NewItem = new User()
+                {
+                    IdUser = item.IdUser,
+                    FullName = item.FullName,
+                    IdState = item.IdState,
                 };
                 list.Add(NewItem);
             }
