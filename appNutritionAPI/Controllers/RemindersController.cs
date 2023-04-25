@@ -51,7 +51,7 @@ namespace appNutritionAPI.Controllers
             //return await _context.Reminders.; 
 
             var query = (from r in _context.Reminders
-                         where r.IdUser == pUserId
+                         where r.IdUser == pUserId && r.Done == false
                          select new
                          {
                              r.IdReminder,
